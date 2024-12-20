@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/ThomasCardin/intervalsICU/pkg"
-	"github.com/ThomasCardin/intervalsICU/templates"
+	"github.com/ThomasCardin/intervalsICU/utils"
 )
 
 const (
@@ -54,12 +54,12 @@ func main() {
 	currentTime := time.Now().In(location)
 	date := currentTime.Format("2006-01-02")
 
-	events, err := pkg.FetchEventsData(intervalsAPIKey, intervalsUserID, date)
+	day, err := pkg.GetDayInformation(intervalsAPIKey, intervalsUserID, date)
 	if err != nil {
 		log.Fatalf("error fetching events : %v", err)
 	}
 
-	message := templates.FormatEventsMessage(date, events)
+	message := utils.FormatEventsMessage(date, day)
 
 	err = pkg.SendMessageToGotify(date, message, gotifyURL, gotifyToken)
 	if err != nil {

@@ -1,0 +1,24 @@
+FROM golang:1.23.0
+
+WORKDIR /app
+
+ARG ARG_INTERVALS_API_KEY
+ARG ARG_INTERVALS_USER_ID       
+ARG ARG_GOTIFY_URL     
+ARG ARG_GOTIFY_TOKEN
+ARG ARG_TIME_ZONE
+
+ENV INTERVALS_API_KEY=${ARG_INTERVALS_API_KEY:-intervals-api-key}
+ENV INTERVALS_USER_ID=${ARG_INTERVALS_USER_ID:-intervals-user-id}
+ENV GOTIFY_URL=${ARG_GOTIFY_URL:-gotify-url}
+ENV GOTIFY_TOKEN=${ARG_GOTIFY_TOKEN:-gotify-token}
+ENV TIME_ZONE=${ARG_TIME_ZONE:-time-zone}
+
+COPY go.* ./
+RUN go mod download
+
+COPY . ./
+
+RUN go build -v -o intervalsicu
+
+CMD ["./intervalsicu"]

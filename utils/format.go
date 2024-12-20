@@ -1,4 +1,4 @@
-package templates
+package utils
 
 import (
 	"fmt"
@@ -12,14 +12,16 @@ const (
 	NOTE    = "NOTE"
 )
 
-func FormatEventsMessage(date string, events []pkg.Event) string {
+func FormatEventsMessage(date string, day pkg.Day) string {
 	var message string
 
-	if len(events) > 0 {
+	message += fmt.Sprintf("Weather forecast ")
+
+	if len(day.Events) > 0 {
 		var workouts []string
 		var notes []string
 
-		for _, event := range events {
+		for _, event := range day.Events {
 			detail := fmt.Sprintf(
 				"- **%s**\n  - Type : %s\n  - Category : %s",
 				event.Name,
