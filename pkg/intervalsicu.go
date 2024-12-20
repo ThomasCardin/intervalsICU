@@ -9,14 +9,42 @@ import (
 )
 
 type Day struct {
-	Events          []Event
-	WeatherForecast WeatherForecast
+	Events   []Event
+	Forecast Forecast
 }
 
-type WeatherForecastCoords struct {
+type Forecast struct {
+	Forecast []WeatherForecast `json:"forecasts"`
 }
 
 type WeatherForecast struct {
+	Location string          `json:"location"`
+	Daily    []DailyForecast `json:"daily"`
+}
+
+type Weather struct {
+	Description string `json:"description"`
+	Icon        string `json:"icon"`
+}
+
+type FeelsLike struct {
+	Day   float64 `json:"day"`
+	Night float64 `json:"night"`
+	Eve   float64 `json:"eve"`
+	Morn  float64 `json:"morn"`
+	Min   float64 `json:"min"`
+	Max   float64 `json:"max"`
+}
+
+type DailyForecast struct {
+	Date        string    `json:"id"`
+	Temperature FeelsLike `json:"feels_like"`
+	Weather     []Weather `json:"weather"`
+	Snow        float64   `json:"snow"`
+	Rain        float64   `json:"rain"`
+	Sunrise     string    `json:"sunrise"`
+	Sunset      string    `json:"sunset"`
+	WindSpeed   float64   `json:"wind_speed"`
 }
 
 type Event struct {
@@ -67,63 +95,49 @@ func GetDayInformation(intervalsAPIKey, intervalsUserID, date string) (Day, erro
 		return Day{}, err
 	}
 
-	wfcoords, err := getWeatherForecastCoords(intervalsUserID, authToken)
-	if err != nil {
-		return Day{}, err
-	}
-
-	wf, err := getWeatherForecast(wfcoords)
+	forecast, err := getWeatherForecast(intervalsUserID, authToken)
 	if err != nil {
 		return Day{}, err
 	}
 
 	return Day{
-		Events:          events,
-		WeatherForecast: wf,
+		Events:   events,
+		Forecast: forecast,
 	}, nil
 }
 
-func getWeatherForecastCoords(intervalsUserID, authToken string) (WeatherForecastCoords, error) {
-	var wfcoords WeatherForecastCoords
+func getWeatherForecast(intervalsUserID, authToken string) (Forecast, error) {
+	var forecast Forecast
 
 	client := &http.Client{}
 	wfCoordsUrl := fmt.Sprintf("https://intervals.icu/api/v1/athlete/%s/weather-forecast", intervalsUserID)
 
 	req, err := http.NewRequest("GET", wfCoordsUrl, nil)
 	if err != nil {
-		return WeatherForecastCoords{}, err
+		return Forecast{}, err
 	}
 	req.Header.Set("Authorization", "Basic "+authToken)
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return WeatherForecastCoords{}, err
+		return Forecast{}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
 		bodyBytes, _ := io.ReadAll(resp.Body)
-		return WeatherForecastCoords{}, fmt.Errorf("error fetching weather-forecast : %s", string(bodyBytes))
+		return Forecast{}, fmt.Errorf("error fetching weather-forecast : %s", string(bodyBytes))
 	}
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return WeatherForecastCoords{}, err
+		return Forecast{}, err
 	}
 
-	fmt.Printf("%s\n", resp.Body)
-	fmt.Printf("%s\n", bodyBytes)
-
-	err = json.Unmarshal(bodyBytes, &wfcoords)
+	err = json.Unmarshal(bodyBytes, &forecast)
 	if err != nil {
-		return WeatherForecastCoords{}, err
+		return Forecast{}, err
 	}
 
-	return wfcoords, nil
-}
-
-func getWeatherForecast(wfcoords WeatherForecastCoords) (WeatherForecast, error) {
-	var wf WeatherForecast
-
-	return wf, nil
+	return forecast, nil
 }

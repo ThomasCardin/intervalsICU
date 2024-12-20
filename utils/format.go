@@ -15,8 +15,30 @@ const (
 func FormatEventsMessage(date string, day pkg.Day) string {
 	var message string
 
-	message += fmt.Sprintf("Weather forecast ")
+	// Forecast
+	found := false
+	for _, x := range day.Forecast.Forecast {
+		for _, v := range x.Daily {
+			if v.Date == date {
+				message += fmt.Sprintf("### Weather forecast\n")
+				message += fmt.Sprintf("- **Location** : %s\n", x.Location)
+				message += fmt.Sprintf("- **Feels like** : Morning (%.2f), Evening (%.2f), Night (%.2f), Day (%.2f)\n", v.Temperature.Morn, v.Temperature.Eve, v.Temperature.Night, v.Temperature.Day)
+				message += fmt.Sprintf("- **Description** : %s\n", v.Weather[0].Description)
+				message += fmt.Sprintf("- **Wind speed** : %.2f\n", v.WindSpeed)
+				message += fmt.Sprintf("- **Rain/Snow** : Rain (%.2f), Snow (%.2f)\n", v.Rain, v.Snow)
+				message += fmt.Sprintf("- **Sunrise/Sunset** : Sunrise (%s), Sunset (%s)\n", v.Sunrise, v.Sunset)
+			}
 
+			found = true
+			break
+		}
+
+		if found {
+			break
+		}
+	}
+
+	// Events
 	if len(day.Events) > 0 {
 		var workouts []string
 		var notes []string

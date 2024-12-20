@@ -9,7 +9,7 @@ import (
 )
 
 func SendMessageToGotify(date, message, gotifyURL, gotifyToken string) error {
-	url := fmt.Sprintf("%s/message?token=%s", gotifyURL, gotifyToken)
+	url := fmt.Sprintf("%smessage?token=%s", gotifyURL, gotifyToken)
 
 	payload := map[string]interface{}{
 		"message":  message,
