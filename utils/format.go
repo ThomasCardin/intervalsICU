@@ -50,8 +50,12 @@ func FormatEventsMessage(date string, day pkg.Day) string {
 				event.Type,
 				event.Category,
 			)
+
+			// Distance is in m
+			d := event.Distance / 1000
+
 			detail += fmt.Sprintf("\n  - Description : %s", event.Description)
-			detail += fmt.Sprintf("\n  - Distance target : %s", event.DistanceTarget)
+			detail += fmt.Sprintf("\n  - Distance target : %.2f", d)
 			detail += fmt.Sprintf("\n  - Tags : %s", strings.Join(event.Tags, ", "))
 
 			switch event.Category {

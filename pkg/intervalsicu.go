@@ -48,17 +48,17 @@ type DailyForecast struct {
 }
 
 type Event struct {
-	ID             int           `json:"id"`
-	StartDate      string        `json:"start_date_local"`
-	EndDate        string        `json:"end_date_local"`
-	Name           string        `json:"name"`
-	Description    string        `json:"description"`
-	Type           string        `json:"type"`
-	Category       string        `json:"category"`
-	Notes          string        `json:"notes"`
-	DistanceTarget string        `json:"distance_target"`
-	Tags           []string      `json:"tags"`
-	Workouts       []interface{} `json:"workouts"`
+	ID          int           `json:"id"`
+	StartDate   string        `json:"start_date_local"`
+	EndDate     string        `json:"end_date_local"`
+	Name        string        `json:"name"`
+	Description string        `json:"description"`
+	Type        string        `json:"type"`
+	Category    string        `json:"category"`
+	Notes       string        `json:"notes"`
+	Distance    float64       `json:"distance"`
+	Tags        []string      `json:"tags"`
+	Workouts    []interface{} `json:"workouts"`
 }
 
 func GetDayInformation(intervalsAPIKey, intervalsUserID, date string) (Day, error) {
